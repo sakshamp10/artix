@@ -17,10 +17,10 @@ main:
     call scanf
 
     
-    lea rdi,[outn]
-    mov rsi,[x]
-    xor eax,eax
-    call printf
+    ;lea rdi,[outn]
+    ;mov rsi,[x]
+    ;xor eax,eax
+    ;call printf
 
     xor eax,eax
     lea rdi,[inps]
@@ -31,6 +31,11 @@ main:
     lea rsi,[stri]
     call scanf
 
+    lea rdi,[outn]
+    mov rsi,[x]
+    xor eax,eax
+    call printf
+    
     xor eax,eax
     lea rdi,[outs]
     lea rsi,[stri]
@@ -42,8 +47,8 @@ main:
 
 section .data
     inpn: db "Enter number: ",0
-    outn: db "the number is: %d ",0
-    outs: db "the string is: %s ",0
+    outn: db "the number is: %d ",10,0
+    outs: db "the string is: %s ",10,0
     inps: db "Enter String: ",0
     integer: db "%d",0
     string: db "%s",0
