@@ -27,12 +27,12 @@ main:
 
     xor eax,eax
     lea rdi,[string]
-    lea rsi,[str]
+    lea rsi,[stri]
     call scanf
 
     xor eax,eax
     lea rdi,[outs]
-    lea rsi,[str]
+    lea rsi,[stri]
     call printf
 
     add rsp, 16 
@@ -46,7 +46,7 @@ section .data
     inps: db "Enter String: ",0
     integer: db "%d",0
     string: db "%s",0
-    str times 100 db 0
+    stri times 100 db 0
 
 section .bss
     x resb 4
