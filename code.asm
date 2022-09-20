@@ -16,12 +16,6 @@ main:
     lea rsi,[x]
     call scanf
 
-    
-    ;lea rdi,[outn]
-    ;mov rsi,[x]
-    ;xor eax,eax
-    ;call printf
-
     xor eax,eax
     lea rdi,[inps]
     call printf
