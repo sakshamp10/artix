@@ -17,8 +17,8 @@ main:
     call scanf
 
     xor eax,eax
-    lea rdi,[outn]
-    lea rsi,[x]
+    mov rdi,[outn]
+    mov rsi,[x]
     call printf
 
     xor eax,eax
