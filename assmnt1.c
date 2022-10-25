@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+char* delim(char* input){
+    char* inp=strtok(input,"\n");
+    return inp;
+}
+
 char** input_line(){
     char* inp= NULL;
     size_t size=0;
@@ -25,19 +30,24 @@ char** input_line(){
 }
 
 void echo(char** input){
-
-    //left for later
-
-    for(int i=1;input[i]!=NULL;i++){
+    int k=1;
+    int nflag=0;
+    if(strcmp(input[1],"-n")==0){
+        k++;
+        nflag=1;
+    }
+    for(int i=k;input[i]!=NULL;i++){
+        if(input[i+1]==NULL && nflag==1){
+            char* temp=delim(input[i+1]);
+            printf("%s",temp);
+            continue;
+        }
         for(int j=0;input[i][j]!='\0';j++){
             if(input[i][j]!='\\')
                 printf("%c",input[i][j]);
-            else{
-                if(input[i][j]=='\\'){
-                }
-            }
         }
-        printf(" ");
+        
+        if(input[i+1]!=NULL) printf(" ");
     }
 }
 
@@ -50,6 +60,7 @@ void pwd(){
         printf("%c",dir[p]);
         p++;
     }
+    printf("\n");
 }
 
 void free2D(char** input){
@@ -61,10 +72,7 @@ void free2D(char** input){
     free(input);
 }
 
-char* delim(char* input){
-    char* inp=strtok(input,"\n");
-    return inp;
-}
+
 
 int main(){
     while(1){
@@ -105,8 +113,8 @@ int main(){
             printf("%s: Command not found\n",inp);
         }
 
-   //     free(inp);
-   //     free2D(input);
+ //       free(inp);
+ //       free2D(input);
     }
     return 0;
 }
