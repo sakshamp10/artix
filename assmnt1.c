@@ -24,39 +24,42 @@ char** input_line(){
     return words;
 }
 
-void echo(char** input){
-
-    //left for later
-
-    for(int i=1;input[i]!=NULL;i++){
-        for(int j=0;input[i][j]!='\0';j++){
-            if(input[i][j]!='\\')
-                printf("%c",input[i][j]);
-            else{
-                if(input[i][j]=='\\'){
-                }
-            }
-        }
-        printf(" ");
-    }
-}
-
-void pwd(){
-    int size=0;
-    char *pwd=NULL;
-    pwd=getcwd(pwd,size);
-    char p=0;
-    while(pwd[p]!='\0'){
-        printf("%c",p);
-        p++;
-    }
-}
+//void echo(char** input){
+//
+//    //left for later
+//
+//    for(int i=1;input[i]!=NULL;i++){
+//        for(int j=0;input[i][j]!='\0';j++){
+//            if(input[i][j]!='\\')
+//                printf("%c",input[i][j]);
+//            else{
+//                if(input[i][j]=='\\'){
+//                }
+//            }
+//        }
+//        printf(" ");
+//    }
+//}
+//
+//void pwd(){
+//    int size=0;
+//    char *pwd=NULL;
+//    pwd=getcwd(pwd,size);
+//    char p=0;
+//    while(pwd[p]!='\0'){
+//        printf("%c",p);
+//        p++;
+//    }
+//}
 
 int main(){
 
     while(1){
         printf("~$ ");
         char **input=input_line();
+        for(int i=0;i<sizeof(input);i++){
+            printf("%s\n",input[i]);
+        }
         if(input[0]==NULL){
             continue;
         }
@@ -64,10 +67,10 @@ int main(){
 
         }
         else if(strcmp(input[0],"echo")){
-            echo(input);
+//            echo(input);
         }
         else if(strcmp(input[0],"pwd")==0){
-            pwd();
+//            pwd();
         }
         else if(strcmp(input[0],"exit")==0){
             break;
