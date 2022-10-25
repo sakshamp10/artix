@@ -44,10 +44,10 @@ void echo(char** input){
 void pwd(){
     size_t size=0;
     char *pwd=NULL;
-    pwd=getcwd(pwd,size);
+    char* dir=getcwd(pwd,size);
     char p=0;
-    while(pwd[p]!='\0'){
-        printf("%c",p);
+    while(dir[p]!='\0'){
+        printf("%c",dir[p]);
         p++;
     }
 }
@@ -105,8 +105,8 @@ int main(){
             printf("%s: Command not found\n",inp);
         }
 
-    //    free(inp);
-    //    free2D(input);
+   //     free(inp);
+   //     free2D(input);
     }
     return 0;
 }
