@@ -62,8 +62,8 @@ void free2D(char** input){
 }
 
 char* delim(char* input){
-    input=strtok(input,"\n");
-    return input;
+    char *inp=strtok(input,"\n");
+    return inp;
 }
 
 int main(){
