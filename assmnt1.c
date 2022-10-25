@@ -62,7 +62,7 @@ void free2D(char** input){
 }
 
 char* delim(char* input){
-    char *inp=strtok(input,"\n");
+    char* inp=strtok(input,"\n");
     return inp;
 }
 
@@ -74,10 +74,10 @@ int main(){
         if(input[0]==NULL){
 
         }
-        if(strcmp(input[0],"cd")==0){
+        if(strcmp(inp,"cd")==0){
 
         }
-        else if(strcmp(inp,"exit")==0){
+        else if(strcmp(inp,"echo")==0){
             echo(input);
         }
         else if(strcmp(inp,"pwd")==0){
@@ -105,8 +105,8 @@ int main(){
             printf("%s: Command not found\n",inp);
         }
 
-        free(inp);
-        free2D(input);
+    //    free(inp);
+    //    free2D(input);
     }
     return 0;
 }
