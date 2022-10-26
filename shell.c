@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 
 void pwd(char** args)
@@ -115,7 +116,7 @@ void cd(char** args)
 void ls(char** args)
 {
     pid_t childPID;
-    int childStatus;
+    int childStatus, temp;
 
     childPID = fork();
 
@@ -132,13 +133,7 @@ void ls(char** args)
     }
     else
     {
-        pid_t temp = wait(&childStatus);
-        while(temp != childPID);
-        {
-            temp = wait(&childStatus);
-            if(temp != childPID)
-            process_terminated(temp);
-        } 
+        temp = wait(NULL);
     }
 }
 
@@ -238,10 +233,7 @@ bool execute(char** args)
     }
     else if(strcmp(args[0], "ls") == 0)
     {
-        for(int i = 1 ; args[i] != NULL ; i++)
-        {
-            puts(args[i] + 2);
-        }
+        ls(args);
     }
     else if(strcmp(args[0], "exit") == 0)
     {
@@ -262,7 +254,7 @@ void shell()
     while(status) 
     {
         getcwd(directory, sizeof(directory));
-        printf("[%s %s]$ ", (getenv("USERNAME")), directory);
+        printf("[%s %s]$ ", (getenv("USER")), directory);
         input = takeInput();
         arguments = parseInput(input);
         status = execute(arguments);
