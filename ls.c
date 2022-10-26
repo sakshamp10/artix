@@ -6,27 +6,51 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    DIR* directroy = opendir(args[0]);
-    if(directroy == NULL)
+    DIR* directory = opendir(args[0]);
+    if(directory == NULL)
     {
         perror("Directory doesn't exist");
         exit(EXIT_FAILURE);
     }
     
-    struct dirent* d = readdir(directroy);
+    struct dirent* d = readdir(directory);
 
     while(d != NULL)
     {
         if(args[1] == NULL)
         {
             if(d -> d_name[0] != '.')
-            {
                 printf("%s ", d -> d_name);
+            d = readdir(directory);
+        }
+        else if(strcmp(args[1], "-a") == 0)
+        {
+            printf("%s ", d -> d_name);
+            d = readdir(directory);
+        }
+        else if(strcmp(args[1], "-p") == 0)
+        {
+            if(d -> d_name != ".")
+            {
+                if(d -> d_type == 8)
+                {
+                    printf("%s ", d -> d_name);
+                }
+                else
+                {
+                    printf("%s/ ", d -> d_name);
+                }
             }
-            d = readdir(directroy);
+            d = readdir(directory);
+        }
+        else
+        {
+            perror("Invalid Syntax");
+            exit(EXIT_FAILURE);
         }
     }
     printf("\n");
 
+    closedir(directory);
     return 0;
 }
