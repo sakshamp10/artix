@@ -117,6 +117,8 @@ void ls(char** args)
 {
     pid_t childPID;
     int childStatus, temp;
+    char currDir[1024];
+    getcwd(currDir, sizeof(currDir));
 
     childPID = fork();
 
@@ -127,7 +129,7 @@ void ls(char** args)
     }
     else if(childPID == 0)
     {
-        execl("ls", args[1], NULL);
+        execl("ls", currDir, args[1], NULL);
         perror("Unknown command");
         exit(EXIT_FAILURE);
     }

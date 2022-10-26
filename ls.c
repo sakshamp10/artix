@@ -6,11 +6,7 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    DIR* directroy;
-    if(args[0] == NULL)
-        directroy = opendir('.');
-    else
-        directroy = opendir(args[0]);
+    DIR* directroy = opendir(args[0]);
     if(directroy == NULL)
     {
         perror("Directory doesn't exist");
