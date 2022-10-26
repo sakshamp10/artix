@@ -4,59 +4,28 @@
 #include <errno.h>
 
 
-void ls(char** args, int a, int l)
+int main(char** args)
 {
-    struct dirent *d;
-    DIR *currDir = opendir(".");
-    if(!currDir)
+    DIR* directroy = opendir(args[0]);
+    if(directroy == NULL)
     {
-        if(errno == ENOENT)
-        {
-            perror("Directory does not exist");
-        }
-        else 
-        {
-            perror("Unable to open directory");
-        }
+        perror("Directory doesn't exist");
         exit(EXIT_FAILURE);
     }
-    while((d = readdir(currDir)) != NULL)
-    {
-        if(!a && d -> d_name[0] == '.')
-            continue;
-        printf("%s ", d -> d_name);
-        if(l)
-            printf("\n");
+    
+    struct dirent* d = readdir(directroy);
 
-    }
-    if(!l)
-        printf("\n");
-}
-
-
-int main(char** args)
-{  
-    if(args[1] == NULL)
+    while(d != NULL)
     {
-        ls(".", 0, 0);
-    }
-    else if(args[1] != NULL)
-    {
-        if(args[1][0] == '-')
+        if(args[1] == NULL)
         {
-            int a = 0; int l = 0;
-            char *operation = (char *)args[1] + 1;
-            if(operation == 'a')
-                a = 1;
-            if(operation == 'l')
-                l = 1;
-            else
+            if(d -> d_name[0] != '.')
             {
-                perror("Unknown operation error");
-                exit(EXIT_FAILURE);
+                pintf("%s ", d -> d_name);
             }
-            ls(".", a, l);
+            d = readdir(directroy);
         }
     }
+
     return 0;
 }
