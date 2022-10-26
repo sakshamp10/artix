@@ -159,7 +159,7 @@ void date(char** args)
     }
     else
     {
-        temp = wait(NULL);
+        childStatus = wait(NULL);
     }
 }
 
