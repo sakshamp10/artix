@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <dirent.h>
 #include <errno.h>
+#include <string.h>
 
 
 int main(int argc, char* args[], char* envp[])
@@ -45,7 +46,7 @@ int main(int argc, char* args[], char* envp[])
         }
         else
         {
-            perror("Invalid Syntax");
+            perror("Invalid operation error");
             exit(EXIT_FAILURE);
         }
     }

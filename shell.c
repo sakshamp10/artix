@@ -140,6 +140,30 @@ void ls(char** args)
 }
 
 
+void date(char** args)
+{
+    pid_t childPID;
+    int childStatus, temp;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("date", args[1], NULL);
+        perror("Functions not allowed");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        temp = wait(NULL);
+    }
+}
+
+
 char* takeInput(void) 
 {
     int bufferSize = 1024;
