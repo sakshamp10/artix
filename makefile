@@ -1,4 +1,5 @@
-output: code.o
-	gcc -m64 -no-pie code.o -o code
-code.o: code.asm
-	yasm -f elf64 code.asm
+default:
+	gcc date.c -o date
+	gcc ls.c -o ls
+	gcc mkdir.c -o mkdir
+	gcc shell.c -o shell
