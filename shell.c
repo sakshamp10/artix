@@ -164,6 +164,30 @@ void date(char** args)
 }
 
 
+void mkdir(char** args)
+{
+    pid_t childPID;
+    int childStatus;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("mkdir", args[1], NULL);
+        perror("Functions not allowed");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        childStatus = wait(NULL);
+    }
+}
+
+
 char* takeInput(void) 
 {
     int bufferSize = 1024;
@@ -264,6 +288,10 @@ bool execute(char** args)
     else if(strcmp(args[0], "date") == 0)
     {
         date(args);
+    }
+    else if(strcmp(args[0], "mkdir") == 0)
+    {
+        mkdir(args);
     }
     else if(strcmp(args[0], "exit") == 0)
     {
