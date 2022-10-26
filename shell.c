@@ -127,7 +127,7 @@ void ls(char** args)
     }
     else if(childPID == 0)
     {
-        execl("ls", args[1], args[2]);
+        execl("ls", args[1], NULL);
         perror("Unknown command");
         exit(EXIT_FAILURE);
     }

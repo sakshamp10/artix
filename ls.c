@@ -4,9 +4,13 @@
 #include <errno.h>
 
 
-int main(char** args)
+int main(int argc, char* args[], char* envp[])
 {
-    DIR* directroy = opendir(args[0]);
+    DIR* directroy;
+    if(args[0] == NULL)
+        directroy = opendir('.');
+    else
+        directroy = opendir(args[0]);
     if(directroy == NULL)
     {
         perror("Directory doesn't exist");
@@ -21,11 +25,12 @@ int main(char** args)
         {
             if(d -> d_name[0] != '.')
             {
-                pintf("%s ", d -> d_name);
+                printf("%s ", d -> d_name);
             }
             d = readdir(directroy);
         }
     }
+    printf("\n");
 
     return 0;
 }
