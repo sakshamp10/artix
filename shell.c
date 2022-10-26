@@ -116,7 +116,7 @@ void cd(char** args)
 void ls(char** args)
 {
     pid_t childPID;
-    int childStatus, temp;
+    int childStatus;
 
     childPID = fork();
 
@@ -135,7 +135,7 @@ void ls(char** args)
     }
     else
     {
-        temp = wait(NULL);
+        childStatus = wait(NULL);
     }
 }
 
@@ -143,7 +143,7 @@ void ls(char** args)
 void date(char** args)
 {
     pid_t childPID;
-    int childStatus, temp;
+    int childStatus;
     childPID = fork();
 
     if(childPID == -1)
@@ -260,6 +260,10 @@ bool execute(char** args)
     else if(strcmp(args[0], "ls") == 0)
     {
         ls(args);
+    }
+    else if(strcmp(args[0], "date") == 0)
+    {
+        date(args);
     }
     else if(strcmp(args[0], "exit") == 0)
     {
