@@ -177,7 +177,7 @@ void mkdir(char** args)
     }
     else if(childPID == 0)
     {
-        execl("mkdir", args[1], NULL);
+        execl("mkdir", args[1], args[2], NULL);
         perror("Functions not allowed");
         exit(EXIT_FAILURE);
     }
