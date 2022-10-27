@@ -21,15 +21,15 @@ int main(int argc, char* args[], char* envp[])
             exit(EXIT_FAILURE);
         }
     }
-    if(strcmp(args[1], "-v") == 0)
+    if(strcmp(args[0], "-v") == 0)
     {
         int check;
-        char *dirName = args[0];
+        char *dirName = args[1];
 
         check = mkdir(dirName, 0777);
 
         if(check == 0)
-            printf("Directory created %s\n", (char*) args[0]);
+            printf("Directory created %s\n", (char*) args[1]);
         else
         {
             perror("Unable to create directory");

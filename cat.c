@@ -30,7 +30,8 @@ int main(int argc, char* args[], char* envp[])
     }
     else if(args[1] != NULL)
     {
-        FILE *file1, *file2;
+        FILE *file1;
+        FILE *file2;
         char c1, c2;
 
         file1 = fopen(args[0], "r");
@@ -40,7 +41,7 @@ int main(int argc, char* args[], char* envp[])
             printf("%c", c1);
             c1 = fgetc(file1);
         }
-        printf(" ");
+        fclose(file1);
         file2 = fopen(args[1], "r");
         c2 = fgetc(file1);
         while(c2 != EOF)
@@ -48,7 +49,6 @@ int main(int argc, char* args[], char* envp[])
             printf("%c", c2);
             c2 = fgetc(file2);
         }
-        fclose(file1);
         fclose(file2);
     }
     
