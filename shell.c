@@ -154,7 +154,7 @@ void date(char** args)
     else if(childPID == 0)
     {
         execl("date", args[1], NULL);
-        perror("Functions not allowed");
+        perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
     else
@@ -178,7 +178,7 @@ void mkdir(char** args)
     else if(childPID == 0)
     {
         execl("mkdir", args[1], args[2], NULL);
-        perror("Functions not allowed");
+        perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
     else
@@ -186,6 +186,31 @@ void mkdir(char** args)
         childStatus = wait(NULL);
     }
 }
+
+
+void cat(char** args)
+{
+    pid_t childPID;
+    int childStatus;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("cat", args[1], NULL);
+        perror("Invalid syntax error");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        childStatus = wait(NULL);
+    }
+}
+
 
 
 char* takeInput(void) 
@@ -292,6 +317,10 @@ bool execute(char** args)
     else if(strcmp(args[0], "mkdir") == 0)
     {
         mkdir(args);
+    }
+    else if(strcmp(args[0], "cat") == 0)
+    {
+        cat(args);
     }
     else if(strcmp(args[0], "exit") == 0)
     {

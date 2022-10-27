@@ -13,7 +13,7 @@ int main(int argc, char* args[], char* envp[])
         perror("Directory doesn't exist");
         exit(EXIT_FAILURE);
     }
-    
+
     struct dirent* d = readdir(directory);
 
     while(d != NULL)
