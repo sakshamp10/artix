@@ -354,35 +354,25 @@ bool execute(char** args)
     else if(strcmp(args[0], "pwd") == 0)
         pwd(args);
     else if(strcmp(args[0], "ls") == 0)
-    {
-        if(args[1] == NULL)
-            ls(args);
-        if(strcmp(args[1], "&t") == 0 && args[2] == NULL)
-            ls_pthread(args);
-        if(strcmp(args[1], "&t") != 0 && args[2] != NULL)
-        {
-            if(strcmp(args[2], "&t") == 0)
-                ls_pthread(args);
-            else
-                ls(args);
-        }
-    }
-    else if(strcmp(args[0], "cat") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
-        cat_pthread(args);
+        ls(args);
+    else if(strcmp(args[0], "ls&t") == 0)
+        ls_pthread(args);
     else if(strcmp(args[0], "cat") == 0)
         cat(args);
-    else if(strcmp(args[0], "date") == 0 && (strcmp(args[1], "&t") == 0 || strcmp(args[2], "&t") == 0))
-        date_pthread(args);
+    else if(strcmp(args[0], "cat&t") == 0)
+        cat_pthread(args);
     else if(strcmp(args[0], "date") == 0)
         date(args);
-    else if(strcmp(args[0], "rm") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
-        rm_pthread(args);
+    else if(strcmp(args[0], "date&t") == 0)
+        date_pthread(args);
     else if(strcmp(args[0], "rm") == 0)
         rm(args);
-    else if(strcmp(args[0], "mkdir") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
-        mkdir_pthread(args);
+    else if(strcmp(args[0], "rm&t") == 0)
+        rm_pthread(args);
     else if(strcmp(args[0], "mkdir") == 0)
         mkdir(args);
+    else if(strcmp(args[0], "mkdir&t") == 0)
+        mkdir_pthread(args);
     else if(strcmp(args[0], "exit") == 0)
         return false;
     else
