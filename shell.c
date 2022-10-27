@@ -212,6 +212,29 @@ void cat(char** args)
 }
 
 
+void rm(char** args)
+{
+    pid_t childPID;
+    int childStatus;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("rm", args[1], args[2], NULL);
+        perror("Invalid syntax error");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        childStatus = wait(NULL);
+    }
+}
+
 
 char* takeInput(void) 
 {
@@ -321,6 +344,10 @@ bool execute(char** args)
     else if(strcmp(args[0], "cat") == 0)
     {
         cat(args);
+    }
+    else if(strcmp(args[0], "rm") == 0)
+    {
+        rm(args);
     }
     else if(strcmp(args[0], "exit") == 0)
     {
