@@ -29,7 +29,7 @@ int main(int argc, char* args[], char* envp[])
         check = mkdir(dirName, 0777);
 
         if(check == 0)
-            printf("Directory created ", (char) args[0]);
+            printf("Directory created %s\n", (char*) args[0]);
         else
         {
             perror("Unable to create directory");
