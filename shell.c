@@ -353,10 +353,20 @@ bool execute(char** args)
         echo(args);
     else if(strcmp(args[0], "pwd") == 0)
         pwd(args);
-    else if(strcmp(args[0], "ls") == 0 && (strcmp(args[1], "&t") == 0 || strcmp(args[2], "&t") == 0))
-        ls_pthread(args);
     else if(strcmp(args[0], "ls") == 0)
-        ls(args);
+    {
+        if(args[1] == NULL)
+            ls(args);
+        if(strcmp(args[1], "&t") == 0 && args[2] == NULL)
+            ls_pthread(args);
+        if(strcmp(args[1], "&t") != 0 && args[2] != NULL)
+        {
+            if(strcmp(args[2], "&t") == 0)
+                ls_pthread(args);
+            else
+                ls(args);
+        }
+    }
     else if(strcmp(args[0], "cat") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
         cat_pthread(args);
     else if(strcmp(args[0], "cat") == 0)
