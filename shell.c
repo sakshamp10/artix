@@ -201,7 +201,7 @@ void cat(char** args)
     }
     else if(childPID == 0)
     {
-        execl("cat", args[1], NULL);
+        execl("cat", args[1], args[2], args[3], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
