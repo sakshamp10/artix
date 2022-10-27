@@ -41,7 +41,7 @@ int main(int argc, char* args[], char* envp[])
         }
         else
         {
-            printf("removed %s", args[1]);
+            printf("removed %s\n", args[1]);
         }
     }
     return 0;
