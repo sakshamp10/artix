@@ -8,31 +8,18 @@
 #include <sys/wait.h>
 
 
-void pwd(char** args)
+void cd(char** args)
 {
-    char directory[1024];
-    getcwd(directory, sizeof(directory));
     if(args[1] == NULL)
-        printf("%s\n", directory);
-    else if(args[1] != NULL)
     {
-        if(args[1][0] == '-')
-        {
-            if(args[1][1] == 'L')
-                printf("%s\n", directory);
-            else if(args[1][1] == 'P')
-                printf("%s\n", directory);
-            else
-            {
-                perror("Unknown operation error");
-                exit(EXIT_FAILURE);
-            }
-        }
-        else
+        printf("Error :Invalid Syntax\n");
+    }
+    else
+    {
+        if(chdir(args[1]) != 0)
         {
             perror("Invalid syntax error");
-            exit(EXIT_FAILURE);
-        }   
+        }  
     }
 }
 
@@ -97,18 +84,31 @@ void echo(char** args)
 }
 
 
-void cd(char** args)
+void pwd(char** args)
 {
+    char directory[1024];
+    getcwd(directory, sizeof(directory));
     if(args[1] == NULL)
+        printf("%s\n", directory);
+    else if(args[1] != NULL)
     {
-        printf("Error :Invalid Syntax\n");
-    }
-    else
-    {
-        if(chdir(args[1]) != 0)
+        if(args[1][0] == '-')
+        {
+            if(args[1][1] == 'L')
+                printf("%s\n", directory);
+            else if(args[1][1] == 'P')
+                printf("%s\n", directory);
+            else
+            {
+                perror("Unknown operation error");
+                exit(EXIT_FAILURE);
+            }
+        }
+        else
         {
             perror("Invalid syntax error");
-        }  
+            exit(EXIT_FAILURE);
+        }   
     }
 }
 
@@ -140,6 +140,30 @@ void ls(char** args)
 }
 
 
+void cat(char** args)
+{
+    pid_t childPID;
+    int childStatus;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("cat", args[1], args[2], args[3], NULL);
+        perror("Invalid syntax error");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        childStatus = wait(NULL);
+    }
+}
+
+
 void date(char** args)
 {
     pid_t childPID;
@@ -154,6 +178,30 @@ void date(char** args)
     else if(childPID == 0)
     {
         execl("date", args[1], NULL);
+        perror("Invalid syntax error");
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        childStatus = wait(NULL);
+    }
+}
+
+
+void rm(char** args)
+{
+    pid_t childPID;
+    int childStatus;
+    childPID = fork();
+
+    if(childPID == -1)
+    {
+        perror("Couldn't execute fork");
+        exit(EXIT_FAILURE);
+    }
+    else if(childPID == 0)
+    {
+        execl("rm", args[1], args[2], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
@@ -188,51 +236,33 @@ void mkdir(char** args)
 }
 
 
-void cat(char** args)
+void ls_pthread(char** args)
 {
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
-    }
-    else if(childPID == 0)
-    {
-        execl("cat", args[1], args[2], args[3], NULL);
-        perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
+    printf("PThread Created\n");
 }
 
 
-void rm(char** args)
+void cat_pthread(char** args)
 {
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
+    printf("PThread Created\n");
+}
 
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
-    }
-    else if(childPID == 0)
-    {
-        execl("rm", args[1], args[2], NULL);
-        perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
+
+void date_pthread(char** args)
+{
+    printf("PThread Created\n");
+}
+
+
+void rm_pthread(char** args)
+{
+    printf("PThread Created\n");
+}
+
+
+void mkdir_pthread(char** args)
+{
+    printf("PThread Created\n");
 }
 
 
@@ -318,40 +348,37 @@ char** parseInput(char * line)
 bool execute(char** args)
 {
     if(strcmp(args[0], "cd") == 0)
-    {
         cd(args);
-    }
     else if(strcmp(args[0], "echo") == 0)
-    {
         echo(args);
-    }
     else if(strcmp(args[0], "pwd") == 0)
-    {
         pwd(args);
-    }
     else if(strcmp(args[0], "ls") == 0)
-    {
         ls(args);
-    }
-    else if(strcmp(args[0], "date") == 0)
-    {
-        date(args);
-    }
-    else if(strcmp(args[0], "mkdir") == 0)
-    {
-        mkdir(args);
-    }
+    else if(strcmp(args[0], "ls") == 0 && (strcmp(args[1], "&t") == 0 || strcmp(args[2], "&t") == 0))
+        lr_ptread(args);
     else if(strcmp(args[0], "cat") == 0)
-    {
         cat(args);
-    }
+    else if(strcmp(args[0], "cat") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
+        cat_pthread(args);
+    else if(strcmp(args[0], "date") == 0)
+        date(args);
+    else if(strcmp(args[0], "date") == 0 && (strcmp(args[1], "&t") == 0 || strcmp(args[2], "&t") == 0))
+        date_pthread(args);
     else if(strcmp(args[0], "rm") == 0)
-    {
         rm(args);
-    }
+    else if(strcmp(args[0], "rm") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
+        rm_pthread(args);
+    else if(strcmp(args[0], "mkdir") == 0)
+        mkdir(args);
+    else if(strcmp(args[0], "mkdir") == 0 && (strcmp(args[2], "&t") == 0 || strcmp(args[3], "&t") == 0))
+        mkdir_pthread(args);
     else if(strcmp(args[0], "exit") == 0)
-    {
         return false;
+    else
+    {
+        perror("Unknown command");
+        exit(EXIT_FAILURE);
     }
     return true;
 }

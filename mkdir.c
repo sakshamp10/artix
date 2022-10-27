@@ -21,24 +21,9 @@ int main(int argc, char* args[], char* envp[])
             exit(EXIT_FAILURE);
         }
     }
-    // if(strcmp(args[0], "-v") == 0)
-    // {
-    //     int check;
-    //     char *dirName = args[1];
-
-    //     check = mkdir(dirName, 0777);
-
-    //     if(check == 0)
-    //         printf("Directory created %s\n", (char*) args[1]);
-    //     else
-    //     {
-    //         perror("Unable to create directory");
-    //         exit(EXIT_FAILURE);
-    //     }
-    // }
-    else if(args[1][0] == '-')
+    else if(args[0][0] == '-')
     {
-        if(args[1][1] == 'v')
+        if(args[0][1] == 'v')
         {
             int check;
             char *dirName = args[1];
@@ -53,17 +38,15 @@ int main(int argc, char* args[], char* envp[])
                 exit(EXIT_FAILURE);
             }
         }
-        else if(args[1][1] == 'm')
+        else if(args[0][1] == 'm')
         {
-            int level = (int)args[1]+2;
+            int level = atoi(args[1]+3);
             int check;
             char *dirName = args[1];
 
             check = mkdir(dirName, level);
 
-            if(check == 0)
-                printf("Directory created %s\n", (char*) args[1]);
-            else
+            if(check != 0)
             {
                 perror("Unable to create directory");
                 exit(EXIT_FAILURE);
