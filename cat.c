@@ -1,22 +1,18 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
+
 
 int main(int argc, char* args[], char* envp[])
 {
     if(strcmp(args[0], ">") == 0 && args[1] != NULL && args[2] == NULL)
     {
-        int check;
-        char *dirName = args[1];
-
-        check = mkdir(dirName, 0777);
-
-        if(check != 0)
-        {
-            perror("Unable to create directory");
-            exit(EXIT_FAILURE);
-        }
+        FILE *file;
+        file = fopen(args[1], "w");
+        fclose(file);
     }
 
     else if(args[1] == NULL)
@@ -32,7 +28,7 @@ int main(int argc, char* args[], char* envp[])
         }
         fclose(file);
     }
-    else if(strcmp(args[1], ">>") == 0)
+    else if(args[1] != NULL)
     {
         FILE *file1, *file2;
         char c1, c2;
@@ -45,7 +41,7 @@ int main(int argc, char* args[], char* envp[])
             c1 = fgetc(file1);
         }
         printf(" ");
-        file2 = fopen(args[2], "r");
+        file2 = fopen(args[1], "r");
         c2 = fgetc(file1);
         while(c2 != EOF)
         {
