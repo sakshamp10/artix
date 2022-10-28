@@ -14,13 +14,13 @@ void cd(char** args)
 {
     if(args[1] == NULL)
     {
-        perror("Invalid operation error");
+        perror("Invalid syntax error");
     }
     else
     {
         if(chdir(args[1]) != 0)
         {
-            perror("Invalid syntax error");
+            perror("File doesn't exit");
         }  
     }
 }
