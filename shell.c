@@ -248,12 +248,17 @@ void* systemExecution(void* argument)
 void ls_thread(char** args)
 {
     char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./date ");
+    strcat(argument, "./ls ");
+    char currDir[1024];
+    getcwd(currDir, sizeof(currDir));
+    strcat(argument, currDir);
+    strcat(argument, " ");
+
     if(args[1] != NULL)
         strcat(argument, args[1]);
     
     pthread_t thread;
-    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
     pthread_join(thread, NULL);
 }
 
@@ -261,12 +266,26 @@ void ls_thread(char** args)
 void cat_thread(char** args)
 {
     char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./date ");
-    if(args[1] != NULL)
+    strcat(argument, "./cat ");
+
+    if(strcmp(args[1], ">") == 0 && args[2] != NULL && args[3] == NULL)
+    {
+        strcat(argument, "> ");
+        strcat(argument, args[2]);
+    }
+
+    else if(args[2] == NULL)
         strcat(argument, args[1]);
-    
+
+    else if(args[2] != NULL)
+    {
+        strcat(argument, args[1]);
+        strcat(argument, " ");
+        strcat(argument, args[2]);
+    }
+
     pthread_t thread;
-    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
     pthread_join(thread, NULL);
 }
 
@@ -279,7 +298,7 @@ void date_thread(char** args)
         strcat(argument, args[1]);
     
     pthread_t thread;
-    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
     pthread_join(thread, NULL);
 }
 
@@ -287,12 +306,25 @@ void date_thread(char** args)
 void rm_thread(char** args)
 {
     char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./date ");
-    if(args[1] != NULL)
+    strcat(argument, "./rm ");
+
+    if(args[2] == NULL)
         strcat(argument, args[1]);
-    
+
+    else if(strcmp(args[1], "-i") == 0)
+    {
+        strcat(argument, "-i ");
+        strcat(argument, args[2]);
+    }
+
+    else if(strcmp(args[1], "-v") == 0)
+    {
+        strcat(argument, "-v ");
+        strcat(argument, args[2]);
+    }
+
     pthread_t thread;
-    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
     pthread_join(thread, NULL);
 }
 
@@ -300,12 +332,25 @@ void rm_thread(char** args)
 void mkdir_thread(char** args)
 {
     char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./date ");
-    if(args[1] != NULL)
-        strcat(argument, args[1]);
+    strcat(argument, "./mkdir ");
+
+    if(args[2] == NULL)
+        strcat(argument , args[1]);
     
+    else if(strcmp(args[1], "-v") == 0)
+    {
+        strcat(argument, "-v ");
+        strcat(argument, args[2]);
+    }
+
+    else if(strcmp(args[1], "-m") == 0)
+    {
+        strcat(argument, "-m ");
+        strcat(argument, args[2]);
+    }
+
     pthread_t thread;
-    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
     pthread_join(thread, NULL);
 }
 

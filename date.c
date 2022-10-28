@@ -5,7 +5,7 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    if(strcmp(args[1], "") == 0)
+    if(args[1] == NULL)
     {
         time_t T = time(NULL);
         struct tm time = *localtime(&T);
