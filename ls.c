@@ -7,7 +7,7 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    DIR* directory = opendir(args[0]);
+    DIR* directory = opendir(args[1]);
     if(directory == NULL)
     {
         perror("Directory doesn't exist");
@@ -18,18 +18,18 @@ int main(int argc, char* args[], char* envp[])
 
     while(d != NULL)
     {
-        if(args[1] == NULL)
+        if(args[2] == NULL)
         {
             if(d -> d_name[0] != '.')
                 printf("%s ", d -> d_name);
             d = readdir(directory);
         }
-        else if(strcmp(args[1], "-a") == 0)
+        else if(strcmp(args[2], "-a") == 0)
         {
             printf("%s ", d -> d_name);
             d = readdir(directory);
         }
-        else if(strcmp(args[1], "-p") == 0)
+        else if(strcmp(args[2], "-p") == 0)
         {
             if(d -> d_name != ".")
             {

@@ -238,68 +238,39 @@ void mkdir(char** args)
 }
 
 
-void *thread_execution(void *arguments)
+void* thread_execution(void* command)
 {
-    system((char *) (arguments));
-    return NULL;
-}
-
-
-void systemExecution(char** commands, char* og)
-{
-    pthead_t thread;
+    // system((char *) (commands));
+    char commands[] = (char *) (command);
     char argument[1024];
     char currDir[1024];
     getcwd(currDir, sizeof(currDir));
-    
-    if(commands[0][0] == 'l' && commands[0][1] == "s")
+    printf("%s %s\n", commands[0], commands[1]);
+    if(strcmp(commands[0], "ls") == 0)
     {
         if(commands[1] == NULL)
         {
-            strcat(argument, "./ls");
-            strcat(argument, s);
-            pthread_create(&thread, NULL, thread_execution, (void*)(argument));
+            strcat(argument, "./ls ");
+            strcat(argument, currDir);
         }
         else
         {
-            strcat(argument, "./ls");
+            strcat(argument, "./ls ");
             strcat(argument, currDir);
             strcat(argument, " ");
             strcat(argument, commands[1]);
-            pthread_create(&thread, NULL, thread_execution, (void*)(argument));
         }
+        printf("%s\n", argument);
+        system(argument);
     }
+}
+
+
+void systemExecution(char** commands)
+{
+    pthead_t thread;
+    pthread_create(&thread, NULL, thread_execution, (void*)(commands));
     pthread_join(thread, NULL);
-}
-
-
-void ls_pthread(char** args)
-{
-    printf("PThread Created\n");
-}
-
-
-void cat_pthread(char** args)
-{
-    printf("PThread Created\n");
-}
-
-
-void date_pthread(char** args)
-{
-    printf("PThread Created\n");
-}
-
-
-void rm_pthread(char** args)
-{
-    printf("PThread Created\n");
-}
-
-
-void mkdir_pthread(char** args)
-{
-    printf("PThread Created\n");
 }
 
 
@@ -393,23 +364,23 @@ bool execute(char** args)
     else if(strcmp(args[0], "ls") == 0)
         ls(args);
     else if(strcmp(args[0], "ls&t") == 0)
-        ls_pthread(args);
+        systemExecution(args);
     else if(strcmp(args[0], "cat") == 0)
         cat(args);
     else if(strcmp(args[0], "cat&t") == 0)
-        cat_pthread(args);
+        systemExecution(args);
     else if(strcmp(args[0], "date") == 0)
         date(args);
     else if(strcmp(args[0], "date&t") == 0)
-        date_pthread(args);
+        systemExecution(args);
     else if(strcmp(args[0], "rm") == 0)
         rm(args);
     else if(strcmp(args[0], "rm&t") == 0)
-        rm_pthread(args);
+        systemExecution(args);
     else if(strcmp(args[0], "mkdir") == 0)
         mkdir(args);
     else if(strcmp(args[0], "mkdir&t") == 0)
-        mkdir_pthread(args);
+        systemExecution(args);
     else if(strcmp(args[0], "exit") == 0)
         return false;
     else
