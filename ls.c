@@ -101,6 +101,11 @@ int main(int argc, char* args[], char* envp[])
             exit(EXIT_FAILURE);
         }
     }
+    else
+    {
+        perror("Invalid syntax error");
+        exit(EXIT_FAILURE);
+    }
     printf("\n");
     closedir(directory);
 

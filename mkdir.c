@@ -52,10 +52,15 @@ int main(int argc, char* args[], char* envp[])
                 exit(EXIT_FAILURE);
             }
         }
+        else
+        {
+            perror("Invalid operation error");
+            exit(EXIT_FAILURE);
+        }
     }
     else
     {
-        perror("Invalid operation error");
+        perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
 
