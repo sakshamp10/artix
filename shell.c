@@ -238,40 +238,40 @@ void mkdir(char** args)
 }
 
 
-void* thread_execution(void** command)
-{
-    // system((char *) (commands));
-    char* commands = (char *) (command);
-    char argument[1024];
-    char currDir[1024];
-    getcwd(currDir, sizeof(currDir));
-    printf("%s %s\n", commands[0], commands[1]);
-    if(strcmp(commands[0], "ls") == 0)
-    {
-        if(commands[1] == NULL)
-        {
-            strcat(argument, "./ls ");
-            strcat(argument, currDir);
-        }
-        else
-        {
-            strcat(argument, "./ls ");
-            strcat(argument, currDir);
-            strcat(argument, " ");
-            strcat(argument, commands[1]);
-        }
-        printf("%s\n", argument);
-        system(argument);
-    }
-}
+// void* thread_execution(void** command)
+// {
+//     // system((char *) (commands));
+//     char* commands = (char *) (command);
+//     char argument[1024];
+//     char currDir[1024];
+//     getcwd(currDir, sizeof(currDir));
+//     printf("%s %s\n", commands[0], commands[1]);
+//     if(strcmp(commands[0], "ls") == 0)
+//     {
+//         if(commands[1] == NULL)
+//         {
+//             strcat(argument, "./ls ");
+//             strcat(argument, currDir);
+//         }
+//         else
+//         {
+//             strcat(argument, "./ls ");
+//             strcat(argument, currDir);
+//             strcat(argument, " ");
+//             strcat(argument, commands[1]);
+//         }
+//         printf("%s\n", argument);
+//         system(argument);
+//     }
+// }
 
 
-void systemExecution(char** commands)
-{
-    pthead_t thread;
-    pthread_create(&thread, NULL, thread_execution, (void*)(commands));
-    pthread_join(thread, NULL);
-}
+// void systemExecution(char** commands)
+// {
+//     pthead_t thread;
+//     pthread_create(&thread, NULL, thread_execution, (void*)(commands));
+//     pthread_join(thread, NULL);
+// }
 
 
 char* takeInput(void) 
