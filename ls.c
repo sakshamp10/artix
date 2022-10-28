@@ -12,9 +12,12 @@ int main(int argc, char* args[], char* envp[])
 
     if(args[2] == NULL)
     {
-        if(d -> d_name[0] != '.')
-            printf("%s ", d -> d_name);
-        d = readdir(directory);
+        while(d != NULL)
+        {
+            if(d -> d_name[0] != '.')
+                printf("%s ", d -> d_name);
+            d = readdir(directory);
+        }
     }
     else if(args[2] != NULL)
     {
@@ -56,6 +59,7 @@ int main(int argc, char* args[], char* envp[])
                         printf("%s/ ", d -> d_name);
                     }
                 }
+                d = readdir(directory);
             }
         }
         else 
