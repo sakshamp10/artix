@@ -27,7 +27,7 @@ int main(int argc, char* args[], char* envp[])
             if(directory == NULL)
             {
                 perror("File doesn't exist");
-                exti(EXIT_FAILURE);
+                exit(EXIT_FAILURE);
             }
             struct dirent* d = readdir(directory);
             while(d != NULL)
@@ -50,7 +50,7 @@ int main(int argc, char* args[], char* envp[])
                 if(directory == NULL)
                 {
                     perror("File doesn't exist");
-                    exti(EXIT_FAILURE);
+                    exit(EXIT_FAILURE);
                 }
                 struct dirent* d = readdir(directory);
             }
@@ -74,7 +74,7 @@ int main(int argc, char* args[], char* envp[])
                 if(directory == NULL)
                 {
                     perror("File doesn't exist");
-                    exti(EXIT_FAILURE);
+                    exit(EXIT_FAILURE);
                 }
                 struct dirent* d = readdir(directory);
             }
