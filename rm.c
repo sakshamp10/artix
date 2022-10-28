@@ -4,7 +4,7 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    if(args[1] == NULL)
+    if(args[2] == NULL)
     {
         int status;
         status = remove(args[0]);
@@ -14,7 +14,7 @@ int main(int argc, char* args[], char* envp[])
             exit(EXIT_FAILURE);
         }
     }
-    else if(strcmp(args[0], "-i") == 0)
+    else if(strcmp(args[1], "-i") == 0)
     {
         char check;
         printf("remove file %s? ", args[1]);
@@ -22,7 +22,7 @@ int main(int argc, char* args[], char* envp[])
         if(check == 'y')
         {
             int status;
-            status = remove(args[1]);
+            status = remove(args[2]);
             if(status != 0)
             {
                 perror("Couldn't remove the file");
@@ -30,10 +30,10 @@ int main(int argc, char* args[], char* envp[])
             }
         }
     }
-    else if(strcmp(args[0], "-v") == 0)
+    else if(strcmp(args[1], "-v") == 0)
     {
         int status;
-        status = remove(args[1]);
+        status = remove(args[2]);
         if(status != 0)
         {
             perror("Couldn't remove the file");
@@ -41,7 +41,7 @@ int main(int argc, char* args[], char* envp[])
         }
         else
         {
-            printf("removed %s\n", args[1]);
+            printf("removed %s\n", args[2]);
         }
     }
     return 0;

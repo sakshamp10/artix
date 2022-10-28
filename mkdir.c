@@ -8,10 +8,10 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    if(args[1] == NULL)
+    if(args[2] == NULL)
     {
         int check;
-        char *dirName = args[0];
+        char *dirName = args[1];
 
         check = mkdir(dirName, 0777);
 
@@ -21,12 +21,12 @@ int main(int argc, char* args[], char* envp[])
             exit(EXIT_FAILURE);
         }
     }
-    else if(args[0][0] == '-')
+    else if(args[1][0] == '-')
     {
-        if(args[0][1] == 'v')
+        if(args[1][1] == 'v')
         {
             int check;
-            char *dirName = args[1];
+            char *dirName = args[2];
 
             check = mkdir(dirName, 0777);
 
@@ -38,11 +38,11 @@ int main(int argc, char* args[], char* envp[])
                 exit(EXIT_FAILURE);
             }
         }
-        else if(args[0][1] == 'm')
+        else if(args[1][1] == 'm')
         {
             int level = atoi(args[1]+3);
             int check;
-            char *dirName = args[1];
+            char *dirName = args[2];
 
             check = mkdir(dirName, level);
 

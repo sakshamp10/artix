@@ -8,14 +8,14 @@
 
 int main(int argc, char* args[], char* envp[])
 {
-    if(strcmp(args[0], ">") == 0 && args[1] != NULL && args[2] == NULL)
+    if(strcmp(args[1], ">") == 0 && args[2] != NULL && args[3] == NULL)
     {
         FILE *file;
         file = fopen(args[1], "w");
         fclose(file);
     }
 
-    else if(args[1] == NULL)
+    else if(args[2] == NULL)
     {
         FILE *file;
         char c;
@@ -28,7 +28,7 @@ int main(int argc, char* args[], char* envp[])
         }
         fclose(file);
     }
-    else if(args[1] != NULL)
+    else if(args[2] != NULL)
     {
         FILE *file1;
         FILE *file2;

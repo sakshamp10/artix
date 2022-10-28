@@ -238,10 +238,10 @@ void mkdir(char** args)
 }
 
 
-void* thread_execution(void* command)
+void* thread_execution(void** command)
 {
     // system((char *) (commands));
-    char commands[] = (char *) (command);
+    char* commands = (char *) (command);
     char argument[1024];
     char currDir[1024];
     getcwd(currDir, sizeof(currDir));
