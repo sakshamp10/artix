@@ -34,8 +34,17 @@ int main(int argc, char* args[], char* envp[])
         }
         else if(strcmp(args[2], "-a") == 0)
         {
-            DIR* directory = opendir(args[3]);
-            struct dirent* d = readdir(directory);
+            if(args[3] == NULL)
+            {
+                DIR* directory = opendir(args[1]);
+                struct dirent* d = readdir(directory);
+            }
+            else
+            {
+                DIR* directory = opendir(args[3]);
+                struct dirent* d = readdir(directory);
+            }
+
             while(d != NULL)
             {
                 printf("%s ", d -> d_name);
@@ -44,8 +53,17 @@ int main(int argc, char* args[], char* envp[])
         }
         else if(strcmp(args[2], "-p") == 0)
         {
-            DIR* directory = opendir(args[3]);
-            struct dirent* d = readdir(directory);
+            if(args[3] == NULL)
+            {
+                DIR* directory = opendir(args[1]);
+                struct dirent* d = readdir(directory);
+            }
+            else
+            {
+                DIR* directory = opendir(args[3]);
+                struct dirent* d = readdir(directory);
+            }
+            
             while(d != NULL)
             {
                 if(d -> d_name != ".")
