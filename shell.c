@@ -120,7 +120,7 @@ void ls(char** args)
     {
         char currDir[1024];
         getcwd(currDir, sizeof(currDir));
-        execl("ls", args[0], currDir, args[1], NULL);
+        execl("ls", args[0], currDir, args[1], args[2], NULL);
         perror("Functions not allowed");
     }
     else
