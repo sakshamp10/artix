@@ -18,7 +18,6 @@ int main(int argc, char* args[], char* envp[])
         if(check != 0)
         {
             perror("Unable to create directory");
-            exit(EXIT_FAILURE);
         }
     }
     else if(args[1][0] == '-')
@@ -35,7 +34,6 @@ int main(int argc, char* args[], char* envp[])
             else
             {
                 perror("Unable to create directory");
-                exit(EXIT_FAILURE);
             }
         }
         else if(args[1][1] == 'm')
@@ -49,9 +47,11 @@ int main(int argc, char* args[], char* envp[])
             if(check != 0)
             {
                 perror("Unable to create directory");
-                exit(EXIT_FAILURE);
             }
         }
     }
+    else
+        perror("Invalid operation error");
+
     return 0;
 }

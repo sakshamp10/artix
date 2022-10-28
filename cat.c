@@ -20,11 +20,17 @@ int main(int argc, char* args[], char* envp[])
         FILE *file;
         char c;
         file = fopen(args[1], "r");
-        c = fgetc(file);
-        while(c != EOF)
+        
+        if(file == NULL)
+            perror("File doesn't exists");
+        else
         {
-            printf("%c", c);
             c = fgetc(file);
+            while(c != EOF)
+            {
+                printf("%c", c);
+                c = fgetc(file);
+            }\
         }
         fclose(file);
     }
@@ -35,22 +41,36 @@ int main(int argc, char* args[], char* envp[])
         char c1, c2;
 
         file1 = fopen(args[1], "r");
-        c1 = fgetc(file1);
-        while(c1 != EOF)
+        
+        if(file1 == NULL)
+            perror("File doesn't exists");
+        else
         {
-            printf("%c", c1);
             c1 = fgetc(file1);
+            while(c1 != EOF)
+            {
+                printf("%c", c1);
+                c1 = fgetc(file1);
+            }
         }
         fclose(file1);
         file2 = fopen(args[2], "r");
-        c2 = fgetc(file1);
-        while(c2 != EOF)
+        
+        if(file2 == NULL)
+            perror("File doesn't exists");
+        else
         {
-            printf("%c", c2);
-            c2 = fgetc(file2);
+            c2 = fgetc(file1);
+            while(c2 != EOF)
+            {
+                printf("%c", c2);
+                c2 = fgetc(file2);
+            }
         }
         fclose(file2);
     }
+    else
+        perror("Invalid operation error");
     
     return 0;
 }

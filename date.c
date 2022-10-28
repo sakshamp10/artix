@@ -27,9 +27,7 @@ int main(int argc, char* args[], char* envp[])
     printf("%s, %02d %s %d %02d:%02d:%02d +0530\n", week[time.tm_wday], time.tm_mday, month[time.tm_mon + 1], time.tm_year + 1900, time.tm_hour, time.tm_min, time.tm_sec);
     }
     else
-    {
-        perror("Unknown Operation Error");
-        exit(EXIT_FAILURE);
-    }
+        perror("Invalid operation error");
+
     return 0;
 }

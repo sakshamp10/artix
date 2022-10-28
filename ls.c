@@ -11,7 +11,6 @@ int main(int argc, char* args[], char* envp[])
     if(directory == NULL)
     {
         perror("Directory doesn't exist");
-        exit(EXIT_FAILURE);
     }
 
     struct dirent* d = readdir(directory);
@@ -45,10 +44,8 @@ int main(int argc, char* args[], char* envp[])
             d = readdir(directory);
         }
         else
-        {
             perror("Invalid operation error");
-            exit(EXIT_FAILURE);
-        }
+
     }
     printf("\n");
 

@@ -14,7 +14,7 @@ void cd(char** args)
 {
     if(args[1] == NULL)
     {
-        printf("Error :Invalid Syntax\n");
+        perror("Invalid operation error");
     }
     else
     {
@@ -42,7 +42,6 @@ void echo(char** args)
             {
                 perror("Unable to open directory");
             }
-            exit(EXIT_FAILURE);
         }
         while((d = readdir(currDir)) != NULL)
         {
@@ -73,16 +72,10 @@ void echo(char** args)
             }
         }
         else 
-        {
             perror("Invalid operation error");
-            exit(EXIT_FAILURE);
-        }
     }
-    else 
-    {
+    else
         perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
-    }
 }
 
 
@@ -101,16 +94,10 @@ void pwd(char** args)
             else if(args[1][1] == 'P')
                 printf("%s\n", directory);
             else
-            {
-                perror("Unknown operation error");
-                exit(EXIT_FAILURE);
-            }
+                perror("Invalid operation error");
         }
         else
-        {
             perror("Invalid syntax error");
-            exit(EXIT_FAILURE);
-        }   
     }
 }
 
@@ -125,7 +112,6 @@ void ls(char** args)
     if(childPID == -1)
     {
         perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
     }
     else if(childPID == 0)
     {
@@ -133,7 +119,6 @@ void ls(char** args)
         getcwd(currDir, sizeof(currDir));
         execl("ls", args[0], currDir, args[1], NULL);
         perror("Functions not allowed");
-        exit(EXIT_FAILURE);
     }
     else
     {
@@ -151,13 +136,11 @@ void cat(char** args)
     if(childPID == -1)
     {
         perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
     }
     else if(childPID == 0)
     {
         execl("cat", args[0], args[1], args[2], args[3], NULL);
         perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
     }
     else
     {
@@ -175,13 +158,11 @@ void date(char** args)
     if(childPID == -1)
     {
         perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
     }
     else if(childPID == 0)
     {
         execl("date", args[0], args[1], NULL);
         perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
     }
     else
     {
@@ -199,13 +180,11 @@ void rm(char** args)
     if(childPID == -1)
     {
         perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
     }
     else if(childPID == 0)
     {
         execl("rm", args[0], args[1], args[2], NULL);
         perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
     }
     else
     {
@@ -223,13 +202,11 @@ void mkdir(char** args)
     if(childPID == -1)
     {
         perror("Couldn't execute fork");
-        exit(EXIT_FAILURE);
     }
     else if(childPID == 0)
     {
         execl("mkdir", args[0], args[1], args[2], NULL);
         perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
     }
     else
     {
@@ -390,7 +367,6 @@ char* takeInput(void)
             if(!buffer)
             {
                 printf("Error :Couldn't allocate memory\n");
-                exit(EXIT_FAILURE);
             }
         }
     }
@@ -407,7 +383,6 @@ char** parseInput(char * line)
     if(tokens == NULL)
     {
         printf("Error : Allocation error\n");
-        exit(EXIT_FAILURE);
     }
 
     currToken = strtok(line, " ");
@@ -423,7 +398,6 @@ char** parseInput(char * line)
             if(tokens == NULL)
             {
                 printf("Error : Allocation error\n");
-                exit(EXIT_FAILURE);
             }
         }
 
@@ -467,7 +441,6 @@ bool execute(char** args)
     else
     {
         perror("Unknown command");
-        exit(EXIT_FAILURE);
     }
     return true;
 }

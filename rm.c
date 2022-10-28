@@ -11,7 +11,6 @@ int main(int argc, char* args[], char* envp[])
         if(status != 0)
         {
             perror("Couldn't remove the file");
-            exit(EXIT_FAILURE);
         }
     }
     else if(strcmp(args[1], "-i") == 0)
@@ -26,7 +25,6 @@ int main(int argc, char* args[], char* envp[])
             if(status != 0)
             {
                 perror("Couldn't remove the file");
-                exit(EXIT_FAILURE);
             }
         }
     }
@@ -37,12 +35,14 @@ int main(int argc, char* args[], char* envp[])
         if(status != 0)
         {
             perror("Couldn't remove the file");
-            exit(EXIT_FAILURE);
         }
         else
         {
             printf("removed %s\n", args[2]);
         }
     }
+    else
+        perror("Invalid operation error");
+    
     return 0;
 }
