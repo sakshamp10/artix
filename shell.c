@@ -5,6 +5,8 @@
 #include <dirent.h>
 #include <errno.h>
 #include <unistd.h>
+#include <assert.h>
+#include <pthread.h>
 #include <sys/wait.h>
 
 
@@ -129,7 +131,7 @@ void ls(char** args)
     {
         char currDir[1024];
         getcwd(currDir, sizeof(currDir));
-        execl("ls", currDir, args[1], NULL);
+        execl("ls", args[0], currDir, args[1], NULL);
         perror("Functions not allowed");
         exit(EXIT_FAILURE);
     }
@@ -153,7 +155,7 @@ void cat(char** args)
     }
     else if(childPID == 0)
     {
-        execl("cat", args[1], args[2], args[3], NULL);
+        execl("cat", args[0], args[1], args[2], args[3], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
@@ -177,7 +179,7 @@ void date(char** args)
     }
     else if(childPID == 0)
     {
-        execl("date", args[1], NULL);
+        execl("date", args[0], args[1], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
@@ -201,7 +203,7 @@ void rm(char** args)
     }
     else if(childPID == 0)
     {
-        execl("rm", args[1], args[2], NULL);
+        execl("rm", args[0], args[1], args[2], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
@@ -225,7 +227,7 @@ void mkdir(char** args)
     }
     else if(childPID == 0)
     {
-        execl("mkdir", args[1], args[2], NULL);
+        execl("mkdir", args[0], args[1], args[2], NULL);
         perror("Invalid syntax error");
         exit(EXIT_FAILURE);
     }
@@ -233,6 +235,41 @@ void mkdir(char** args)
     {
         childStatus = wait(NULL);
     }
+}
+
+
+void *thread_execution(void *arguments)
+{
+    system((char *) (arguments));
+    return NULL;
+}
+
+
+void systemExecution(char** commands, char* og)
+{
+    pthead_t thread;
+    char argument[1024];
+    char currDir[1024];
+    getcwd(currDir, sizeof(currDir));
+    
+    if(commands[0][0] == 'l' && commands[0][1] == "s")
+    {
+        if(commands[1] == NULL)
+        {
+            strcat(argument, "./ls");
+            strcat(argument, s);
+            pthread_create(&thread, NULL, thread_execution, (void*)(argument));
+        }
+        else
+        {
+            strcat(argument, "./ls");
+            strcat(argument, currDir);
+            strcat(argument, " ");
+            strcat(argument, commands[1]);
+            pthread_create(&thread, NULL, thread_execution, (void*)(argument));
+        }
+    }
+    pthread_join(thread, NULL);
 }
 
 

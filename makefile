@@ -5,3 +5,4 @@ default:
 	gcc cat.c -o cat
 	gcc rm.c -o rm
 	gcc shell.c -o shell
+	./shell
