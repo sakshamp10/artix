@@ -22,7 +22,10 @@ int main(int argc, char* args[], char* envp[])
         file = fopen(args[1], "r");
         
         if(file == NULL)
+        {
             perror("File doesn't exists");
+            exit(EXIT_FAILURE);
+        }    
         else
         {
             c = fgetc(file);
@@ -43,7 +46,11 @@ int main(int argc, char* args[], char* envp[])
         file1 = fopen(args[1], "r");
         
         if(file1 == NULL)
+        {
             perror("File doesn't exists");
+            exit(EXIT_FAILURE);
+        }
+
         else
         {
             c1 = fgetc(file1);
@@ -57,7 +64,10 @@ int main(int argc, char* args[], char* envp[])
         file2 = fopen(args[2], "r");
         
         if(file2 == NULL)
+        {
             perror("File doesn't exists");
+            exit(EXIT_FAILURE);
+        }    
         else
         {
             c2 = fgetc(file1);
@@ -70,7 +80,10 @@ int main(int argc, char* args[], char* envp[])
         fclose(file2);
     }
     else
+    {
         perror("Invalid operation error");
+        exit(EXIT_FAILURE);
+    }
     
     return 0;
 }

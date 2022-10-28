@@ -28,7 +28,10 @@ void cd(char** args)
 
 void echo(char** args)
 {
-    if (strcmp(args[1], "*") == 0)
+    if (args[1] == NULL)
+        perror("Invalid syntax error");
+    
+    else if (strcmp(args[1], "*") == 0)
     {
         struct dirent *d;
         DIR *currDir = opendir(".");
