@@ -7,7 +7,7 @@ int main(int argc, char* args[], char* envp[])
     if(args[2] == NULL)
     {
         int status;
-        status = remove(args[0]);
+        status = remove(args[1]);
         if(status != 0)
         {
             perror("Couldn't remove the file");
@@ -17,7 +17,7 @@ int main(int argc, char* args[], char* envp[])
     else if(strcmp(args[1], "-i") == 0)
     {
         char check;
-        printf("remove file %s? ", args[1]);
+        printf("remove file %s? ", args[2]);
         scanf("%c", &check);
         if(check == 'y')
         {

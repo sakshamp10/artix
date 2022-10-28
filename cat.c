@@ -11,7 +11,7 @@ int main(int argc, char* args[], char* envp[])
     if(strcmp(args[1], ">") == 0 && args[2] != NULL && args[3] == NULL)
     {
         FILE *file;
-        file = fopen(args[1], "w");
+        file = fopen(args[2], "w");
         fclose(file);
     }
 
@@ -19,7 +19,7 @@ int main(int argc, char* args[], char* envp[])
     {
         FILE *file;
         char c;
-        file = fopen(args[0], "r");
+        file = fopen(args[1], "r");
         c = fgetc(file);
         while(c != EOF)
         {
@@ -34,7 +34,7 @@ int main(int argc, char* args[], char* envp[])
         FILE *file2;
         char c1, c2;
 
-        file1 = fopen(args[0], "r");
+        file1 = fopen(args[1], "r");
         c1 = fgetc(file1);
         while(c1 != EOF)
         {
@@ -42,7 +42,7 @@ int main(int argc, char* args[], char* envp[])
             c1 = fgetc(file1);
         }
         fclose(file1);
-        file2 = fopen(args[1], "r");
+        file2 = fopen(args[2], "r");
         c2 = fgetc(file1);
         while(c2 != EOF)
         {

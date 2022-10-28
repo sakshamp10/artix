@@ -238,40 +238,76 @@ void mkdir(char** args)
 }
 
 
-// void* thread_execution(void** command)
-// {
-//     // system((char *) (commands));
-//     char* commands = (char *) (command);
-//     char argument[1024];
-//     char currDir[1024];
-//     getcwd(currDir, sizeof(currDir));
-//     printf("%s %s\n", commands[0], commands[1]);
-//     if(strcmp(commands[0], "ls") == 0)
-//     {
-//         if(commands[1] == NULL)
-//         {
-//             strcat(argument, "./ls ");
-//             strcat(argument, currDir);
-//         }
-//         else
-//         {
-//             strcat(argument, "./ls ");
-//             strcat(argument, currDir);
-//             strcat(argument, " ");
-//             strcat(argument, commands[1]);
-//         }
-//         printf("%s\n", argument);
-//         system(argument);
-//     }
-// }
+void* systemExecution(void* argument)
+{
+    system((char*) (argument));
+    return NULL;
+}
 
 
-// void systemExecution(char** commands)
-// {
-//     pthead_t thread;
-//     pthread_create(&thread, NULL, thread_execution, (void*)(commands));
-//     pthread_join(thread, NULL);
-// }
+void ls_thread(char** args)
+{
+    char* argument = malloc(sizeof(char) * 1024);
+    strcat(argument, "./date ");
+    if(args[1] != NULL)
+        strcat(argument, args[1]);
+    
+    pthread_t thread;
+    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_join(thread, NULL);
+}
+
+
+void cat_thread(char** args)
+{
+    char* argument = malloc(sizeof(char) * 1024);
+    strcat(argument, "./date ");
+    if(args[1] != NULL)
+        strcat(argument, args[1]);
+    
+    pthread_t thread;
+    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_join(thread, NULL);
+}
+
+
+void date_thread(char** args)
+{
+    char* argument = malloc(sizeof(char) * 1024);
+    strcat(argument, "./date ");
+    if(args[1] != NULL)
+        strcat(argument, args[1]);
+    
+    pthread_t thread;
+    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_join(thread, NULL);
+}
+
+
+void rm_thread(char** args)
+{
+    char* argument = malloc(sizeof(char) * 1024);
+    strcat(argument, "./date ");
+    if(args[1] != NULL)
+        strcat(argument, args[1]);
+    
+    pthread_t thread;
+    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_join(thread, NULL);
+}
+
+
+void mkdir_thread(char** args)
+{
+    char* argument = malloc(sizeof(char) * 1024);
+    strcat(argument, "./date ");
+    if(args[1] != NULL)
+        strcat(argument, args[1]);
+    
+    pthread_t thread;
+    pthread_create(thread, NULL, systemExecution, (void*) (argument));
+    pthread_join(thread, NULL);
+}
 
 
 char* takeInput(void) 
@@ -364,23 +400,23 @@ bool execute(char** args)
     else if(strcmp(args[0], "ls") == 0)
         ls(args);
     else if(strcmp(args[0], "ls&t") == 0)
-        systemExecution(args);
+        ls_thread(args);
     else if(strcmp(args[0], "cat") == 0)
         cat(args);
     else if(strcmp(args[0], "cat&t") == 0)
-        systemExecution(args);
+        cat_thread(args);
     else if(strcmp(args[0], "date") == 0)
         date(args);
     else if(strcmp(args[0], "date&t") == 0)
-        systemExecution(args);
+        date_thread(args);
     else if(strcmp(args[0], "rm") == 0)
         rm(args);
     else if(strcmp(args[0], "rm&t") == 0)
-        systemExecution(args);
+        rm_thread(args);
     else if(strcmp(args[0], "mkdir") == 0)
         mkdir(args);
     else if(strcmp(args[0], "mkdir&t") == 0)
-        systemExecution(args);
+        mkdir_thread(args);
     else if(strcmp(args[0], "exit") == 0)
         return false;
     else
