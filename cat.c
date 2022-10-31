@@ -1,89 +1,71 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-
-
-int main(int argc, char* args[], char* envp[])
-{
-    if(strcmp(args[1], ">") == 0 && args[2] != NULL && args[3] == NULL)
-    {
-        FILE *file;
-        file = fopen(args[2], "w");
-        fclose(file);
+#include <string.h>
+#include <errno.h>
+ 
+int main(int argc, char *argv[], char* envp[]){
+    FILE* file_pointer;
+    if(!argv[2]){
+        file_pointer = fopen(argv[1], "r");
     }
-
-    else if(args[2] == NULL)
-    {
-        FILE *file;
-        char c;
-        file = fopen(args[1], "r");
-        
-        if(file == NULL)
-        {
-            perror("File doesn't exists");
-            exit(EXIT_FAILURE);
-        }    
-        else
-        {
-            c = fgetc(file);
-            while(c != EOF)
-            {
-                printf("%c", c);
-                c = fgetc(file);
-            }\
-        }
-        fclose(file);
+    else{
+        file_pointer = fopen(argv[2], "r");
     }
-    else if(args[2] != NULL)
-    {
-        FILE *file1;
-        FILE *file2;
-        char c1, c2;
-
-        file1 = fopen(args[1], "r");
-        
-        if(file1 == NULL)
-        {
-            perror("File doesn't exists");
-            exit(EXIT_FAILURE);
+;
+    if (!file_pointer) { // Not working
+        printf("msh: Error !.😔🥲\n");
+        if(errno == 2){
+            printf("No such file exits \n");
         }
-
-        else
-        {
-            c1 = fgetc(file1);
-            while(c1 != EOF)
-            {
-                printf("%c", c1);
-                c1 = fgetc(file1);
-            }
+        else if(errno ==EINVAL ){
+            printf("File can't be opened\n");
         }
-        fclose(file1);
-        file2 = fopen(args[2], "r");
-        
-        if(file2 == NULL)
-        {
-            perror("File doesn't exists");
-            exit(EXIT_FAILURE);
-        }    
-        else
-        {
-            c2 = fgetc(file1);
-            while(c2 != EOF)
-            {
-                printf("%c", c2);
-                c2 = fgetc(file2);
-            }
+        else if(errno == 21){
+            printf("It's a directory\n");
         }
-        fclose(file2);
-    }
-    else
-    {
-        perror("Invalid operation error");
         exit(EXIT_FAILURE);
     }
-    
+    char ch = fgetc(file_pointer);
+    if(!argv[2]){
+        while(ch != EOF){ // till end of file
+            printf("%c",ch);
+            ch = fgetc(file_pointer);
+        }
+        printf("\n");
+    }
+    else if(strcmp(argv[1],"-E") == 0){
+        while(ch != EOF){ // till end of file
+            if(ch == '\n'){
+                printf("$");
+            }
+            printf("%c",ch);
+            ch = fgetc(file_pointer);
+        }
+        printf("$\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    else if(strcmp(argv[1],"-n") == 0){
+        int index = 1;
+        printf("%d ", index++);
+        while(ch != EOF){ // till end of file
+            if(ch == '\n'){
+                printf("%c",ch);
+                ch = fgetc(file_pointer);
+                printf("%d ", index++);
+                continue;;
+            }
+            printf("%c",ch);
+            ch = fgetc(file_pointer);
+        }
+        printf("\n");
+        exit(EXIT_SUCCESS);
+    }
+
+    else{
+        printf("msh: Error !. 😔🥲\nNo such operation exists for cat\n");
+    }
+ 
+    fclose(file_pointer);
     return 0;
 }

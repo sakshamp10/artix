@@ -1,478 +1,412 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <dirent.h>
-#include <errno.h>
 #include <unistd.h>
-#include <assert.h>
 #include <pthread.h>
 #include <sys/wait.h>
 
 
-void cd(char** args)
-{
-    if(args[1] == NULL)
-    {
-        perror("Invalid syntax error");
-    }
-    else
-    {
-        if(chdir(args[1]) != 0)
-        {
-            perror("File doesn't exit");
-        }  
-    }
+void forkExecution(char **commands, char *og);
+void sysExecution(char **commands,char *og);
+
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+char *taking_input(){ // why are we using pointer
+  char * line;  // actual line
+  size_t length; // we will store the actual size of our input line in this variable
+  size_t size = 1; // initial size to take an input using getline()
+
+  line = (char *) malloc (size * length); // dynamically allocating the memory to the size of the input since we don't know the lenght, so we can incraese it later if we want to
+  length = getline(&line,&size, stdin); // returns the lenght of the actual length of the input
+
+  if(length == -1){ // getline returns -1 if it cannot allocate any more space
+    printf("msh: Sorry, Some error occured 😔.\n");
+    exit(EXIT_FAILURE);
+  }
+  line[strcspn(line, "\n")] = 0;
+   return line;
 }
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
+char **breaking_into_smaller_pieces(char* line){  // why are we using double pointer
+  int index = 0,line_size = 1024; // index for storing the parts of the input
+  char **executable_commands = malloc(sizeof(char)*line_size);  // dynamically allocating the space for character array to store the parts
+  char *small_commands;
+  small_commands = strtok(line," "); // returns the first instance of the delimiter
+  while(small_commands != NULL){
+    executable_commands[index++] = small_commands;
+    small_commands = strtok(NULL, " ");
+  }  
+  return executable_commands;
+}
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-void echo(char** args)
-{
-    if (args[1] == NULL)
-        perror("Invalid syntax error");
+void cd(char ** commands){ // only 1 arguement working
+  if(commands[1] == NULL){
+    printf("msh: Error 🥲!!.\nInvalid syntax: Expects some arguement to the command cd\n");
+  }
+
+  else if(commands[2] != NULL){
+    printf("msh: Error 🥲!!.\nInvalid syntax: Too many arguments to cd\n");
+  }
+
+  else if(strcmp(commands[1],"~") == 0){
+    char s[1000];
+    chdir("/home");
+    printf("Directory updated to %s\n", getcwd(s,1000));
+  }
+  
+  else if(chdir(commands[1]) != 0){ // checknig if a directory even exist or not
+    printf("msh: Error !.😔🥲\nNo such directory Exist\n");
+  }
+
+  else{
+    char s[1000];
+    printf("Directory updated to %s\n", getcwd(s,1000));
+  }
+}
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+void echo(char ** commands){
+
+  if (!commands[1]){
+    printf("msh: Error 🥲!!.\nInvalid syntax: Expects some arguement to the command echo\n");
+  }
+
+  else if(strcmp(commands[1],"*") == 0){
+    DIR* directory = opendir(".");
+    struct dirent* file_folder = readdir(directory); // either returns NULL or points on the file/folder of the directory
+    while(file_folder != NULL){
+        if(file_folder->d_name[0] != '.'){ // .. and . means current directory and previous directory
+        printf("%s  ", file_folder->d_name);
+        }
+        file_folder = readdir(directory);    
+    } 
+  }
+  else if(strcmp(commands[1],"-n") == 0){
+    int index = 1;
+    while(commands[index] != NULL){
+      if(commands[index] != NULL){
+        printf("%s ", commands[index]);
+      }
+      index++;
+    }
+  }
+  else if(commands[1][0] != '-'){
+    int index = 1;
+    while(commands[index] != NULL){
+      if(commands[index] != NULL){
+        printf("%s ", commands[index]);
+      }
+      index++;
+    }
+    printf("\n");
+  }
+  else{
+    printf("msh: Error !.😔🥲.\nNo such operator exists for echo\n");
+  }
+  
+
+}
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+void pwd( char** commands){
+  if(commands[1] != NULL && commands[1][0] != '-'){
+    printf("msh: Error 🥲!!.\nInvalid syntax: Too many arguments for pwd\n");
+  }
+  else{
+    if(commands[1] == NULL||strcmp(commands[1],"-P") == 0){
+      char s[1000];
+      printf("Current Directory: %s\n", getcwd(s,1000));
+    }
+    else if(strcmp(commands[1],"-L") == 0){
+      char s[1000];
+      printf("Current Directory: %s\n",realpath(getcwd(s,100),NULL));
+    }
+    else{
+      printf("msh: Error !.😔🥲\nNo such operation exists for pwd\n");
+    }
+  }
+  
+}
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+void execution(char ** commands,char *s){
+    if(strcmp(commands[0], "cd") == 0){ // current directory command
+        cd(commands);
+    }
+
+    else if(strcmp(commands[0], "echo") == 0){ // echo command
+      echo(commands);
+    }
+
+    else if (strcmp(commands[0], "pwd") == 0){ // pwd command
+      pwd(commands);
+    }
+
+    else{
+
+      if(commands[0][strlen(*commands)-2] == '&' && commands[0][strlen(*commands)-1] == 't'){
+        sysExecution(commands,s); 
+      }
+      else{
+        forkExecution(commands,s);
+      }
+    }
     
-    else if (strcmp(args[1], "*") == 0)
-    {
-        struct dirent *d;
-        DIR *currDir = opendir(".");
-        if(!currDir)
-        {
-            if(errno == ENOENT)
-            {
-                perror("Directory does not exist");
-            }
-            else 
-            {
-                perror("Unable to open directory");
-            }
-        }
-        while((d = readdir(currDir)) != NULL)
-        {
-            if(d -> d_name[0] == '.')
-                continue;
-            printf("%s ", d -> d_name);
+}
 
-        }
-        printf("\n");
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+
+void forkExecution(char **commands, char *og){
+  int pid, p_wait;
+  pid = fork();
+  if(pid < 0){
+    printf("msh: Error - Fork Failed !. 😔🥲\n");
+    exit(EXIT_FAILURE);
+  }
+  
+  else if(pid == 0){
+    char s[100];
+    getcwd(s,100);
+    char path[60] = {0};
+    if(strcmp(commands[0],"ls") == 0){
+      strcat(path,og);
+      strcat(path,"/ls");
+      char buffer[] = "buffer";
+      if(commands[2]){
+        printf("msh: Error!. 😔🥲\nInlvaid syntax: Too many arguments for ls.\n");
+      }
+      else{
+        execl(path,buffer,s,commands[1],NULL);
+      }
     }
+    else if(strcmp(commands[0],"cat") == 0){
+      strcat(path,og);
+      strcat(path,"/cat");
+      char buffer[] = "buffer";
 
-    else if(args[1][0] != '-' && args[1] != "*")
-    {
-        for(int i = 1 ; args[i] != NULL ; i++)
-        {
-            printf("%s ", args[i]);
+      if(!commands[1] || commands[1] != NULL && commands[1][0] == '-' && commands[2] == NULL){
+        printf("msh: Error !.😔🥲\nInvalid syntax: expects some argument to cat\n");
+      }
+      else{
+        if(commands[2] != NULL && commands[1][0] != '-'){
+          printf("msh: Error !.😔🥲\nInvalid syntax: Too many arguments for cat\n");
         }
-        printf("\n");
+        else{
+            execl(path,buffer,commands[1],commands[2],NULL);
+        }
+      }
     }
     
-    else if(args[1][0] == '-')
-    {
-        if(args[1][1] == 'n')
-        {
-            for(int i = 2 ; args[i] != NULL ; i++)
-            {
-                printf("%s ", args[i]);
-            }
+    else if(strcmp(commands[0],"date") == 0){
+
+      strcat(path,og);
+      strcat(path,"/date");
+      char buffer[] = "buffer";
+      if(commands[2]){
+        printf("msh: Error !. 😔🥲\nInvalid syntxa: Too many arguments for date.\n");
+
+      }
+      else{
+        if(commands[1] != NULL && commands[1][0] != '-'){
+            printf("msh: Error !. 😔🥲\nInvalid syntxa: Too many arguments for date.\n");
         }
-        else 
-            perror("Invalid operation error");
-    }
-    else
-        perror("Invalid syntax error");
-}
-
-
-void pwd(char** args)
-{
-    char directory[1024];
-    getcwd(directory, sizeof(directory));
-    if(args[1] == NULL)
-        printf("%s\n", directory);
-    else if(args[1] != NULL)
-    {
-        if(args[1][0] == '-')
-        {
-            if(args[1][1] == 'L')
-                printf("%s\n", directory);
-            else if(args[1][1] == 'P')
-                printf("%s\n", directory);
-            else
-                perror("Invalid operation error");
+        else{
+          execl(path,buffer,commands[1],NULL);
         }
-        else
-            perror("Invalid syntax error");
+      }
     }
-}
-
-
-void ls(char** args)
-{
-    pid_t childPID;
-    int childStatus;
-
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-    }
-    else if(childPID == 0)
-    {
-        char currDir[1024];
-        getcwd(currDir, sizeof(currDir));
-        execl("ls", args[0], currDir, args[1], args[2], NULL);
-        perror("Functions not allowed");
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
-}
-
-
-void cat(char** args)
-{
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-    }
-    else if(childPID == 0)
-    {
-        execl("cat", args[0], args[1], args[2], args[3], NULL);
-        perror("Invalid syntax error");
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
-}
-
-
-void date(char** args)
-{
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-    }
-    else if(childPID == 0)
-    {
-        execl("date", args[0], args[1], NULL);
-        perror("Invalid syntax error");
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
-}
-
-
-void rm(char** args)
-{
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-    }
-    else if(childPID == 0)
-    {
-        execl("rm", args[0], args[1], args[2], NULL);
-        perror("Invalid syntax error");
-    }
-    else
-    {
-        childStatus = wait(NULL);
-    }
-}
-
-
-void mkdir(char** args)
-{
-    pid_t childPID;
-    int childStatus;
-    childPID = fork();
-
-    if(childPID == -1)
-    {
-        perror("Couldn't execute fork");
-    }
-    else if(childPID == 0)
-    {
-        execl("mkdir", args[0], args[1], args[2], NULL);
-        perror("Invalid syntax error");
-    }   
-    else
-    {
-        childStatus = wait(NULL);
-    }
-}
-
-
-void* systemExecution(void* argument)
-{
-    system((char*) (argument));
-    return NULL;
-}
-
-
-void ls_thread(char** args)
-{
-    char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./ls ");
-    char currDir[1024];
-    getcwd(currDir, sizeof(currDir));
-    strcat(argument, currDir);
-    strcat(argument, " ");
-
-    if(args[1] != NULL)
-        strcat(argument, args[1]);
     
-    pthread_t thread;
-    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
-    pthread_join(thread, NULL);
-}
-
-
-void cat_thread(char** args)
-{
-    char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./cat ");
-
-    if(strcmp(args[1], ">") == 0 && args[2] != NULL && args[3] == NULL)
-    {
-        strcat(argument, "> ");
-        strcat(argument, args[2]);
+    else if(strcmp(commands[0],"rm") == 0){
+      strcat(path,og);
+      strcat(path,"/rm");
+      char buffer[] = "buffer";
+      if(commands[2] != NULL && commands[1][0] != '-'){
+        printf("msh: Error!. 😔🥲\nInlvaid syntax: Too many arguments for rm.\n");
+      }
+      else{
+        execl(path,buffer,s,commands[1],commands[2],NULL);
+      }
     }
-
-    else if(args[2] == NULL)
-        strcat(argument, args[1]);
-
-    else if(args[2] != NULL)
-    {
-        strcat(argument, args[1]);
-        strcat(argument, " ");
-        strcat(argument, args[2]);
-    }
-
-    pthread_t thread;
-    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
-    pthread_join(thread, NULL);
-}
-
-
-void date_thread(char** args)
-{
-    char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./date ");
-    if(args[1] != NULL)
-        strcat(argument, args[1]);
-    
-    pthread_t thread;
-    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
-    pthread_join(thread, NULL);
-}
-
-
-void rm_thread(char** args)
-{
-    char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./rm ");
-
-    if(args[2] == NULL)
-        strcat(argument, args[1]);
-
-    else if(strcmp(args[1], "-i") == 0)
-    {
-        strcat(argument, "-i ");
-        strcat(argument, args[2]);
-    }
-
-    else if(strcmp(args[1], "-v") == 0)
-    {
-        strcat(argument, "-v ");
-        strcat(argument, args[2]);
-    }
-
-    pthread_t thread;
-    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
-    pthread_join(thread, NULL);
-}
-
-
-void mkdir_thread(char** args)
-{
-    char* argument = malloc(sizeof(char) * 1024);
-    strcat(argument, "./mkdir ");
-
-    if(args[2] == NULL)
-        strcat(argument , args[1]);
-    
-    else if(strcmp(args[1], "-v") == 0)
-    {
-        strcat(argument, "-v ");
-        strcat(argument, args[2]);
-    }
-
-    else if(strcmp(args[1], "-m") == 0)
-    {
-        strcat(argument, "-m ");
-        strcat(argument, args[2]);
-    }
-
-    pthread_t thread;
-    pthread_create(&thread, NULL, systemExecution, (void*) (argument));
-    pthread_join(thread, NULL);
-}
-
-
-char* takeInput(void) 
-{
-    int bufferSize = 1024;
-    int position = 0;
-    char* buffer = malloc(bufferSize * sizeof(char));
-    int c;
-
-    if(!buffer)
-    {
-        printf("Error :Couldn't allocate memory\n");
-        exit;
-    }
-
-    while(true)
-    {
-        c = getchar();
-
-        if(c == EOF|| c == '\n')
-        {
-            buffer[position] = '\0';
-            return buffer;
+    else if(strcmp(commands[0],"mkdir") == 0){
+      if(!commands[1] || commands[1] != NULL && commands[1][0] == '-' && commands[2] == NULL){
+        printf("msh: Error !.😔🥲\nInvalid syntax: expects some argument to mkdir\n");
+      }
+      else{
+        if (commands[2] != NULL && commands[1][0] != '-'){
+          printf("msh: Error !. 😔🥲\nInvalid syntax: Too many arguments to mkdir\n");
         }
-        else
-        {
-            buffer[position] = c;
+        else{
+          strcat(path,og);
+          strcat(path,"/mkdir");
+          char buffer[] = "buffer";
+          execl(path,buffer,commands[1],commands[2],NULL);
         }
-        position++;
+      }
+    }
+    else{
+      printf("msh: Error !. 😔🥲.\nNo such command exits in msh shell\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+  else{
+    p_wait = wait(NULL);
+  }
+}
 
-        if(position >= bufferSize)
-        {
-            bufferSize += 1024;
-            buffer = realloc(buffer, bufferSize);
-            if(!buffer)
-            {
-                printf("Error :Couldn't allocate memory\n");
-            }
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
+void *thread_execution(void *argument){
+  // printf("1. %s\n",(char *)(argument));
+  system((char*)(argument));
+  return NULL;
+}
+void sysExecution(char **commands,char *og){
+  pthread_t thread;
+  char s[100],argument[1000] = {0},space[] = " ";
+  getcwd(s,100);
+  if(commands[0][0] == 'l' && commands[0][1] == 's'){
+    // char path[] = "/Users/mahansh/Downloads/Practice/OS/Shell/ls";
+    char path[] = "./ls ";
+    strcat(argument,path);
+    strcat(argument,s);
+    if(commands[1] != NULL){;
+      strcat(argument,space);
+      strcat(argument,commands[1]);
+    }
+
+    if(commands[2]){
+        printf("msh: Error\nInlvaid syntax: Too many arguments for ls.\n");
+      }
+      else{
+      pthread_create(&thread,NULL,thread_execution,(void *)(argument));
+    }
+  }
+
+  else if(commands[0][0] == 'c' && commands[0][1] == 'a' && commands[0][2] == 't'){
+    // char path[] = "/Users/mahansh/Downloads/Practice/OS/Shell/cat";
+    if(commands[1] == NULL){
+      printf("msh: Error !.😔🥲\nInvalid syntax: expects some argument to cat\n");
+    }
+    else if(commands[2] != NULL && commands[1][0] != '-'){
+      printf("msh: Error !.😔🥲\nInvalid syntax: Too many arguments for cat\n");
+    }
+    else{
+      char path[] = "./cat ";
+      strcat(argument,path);
+      strcat(argument,space);
+      strcat(argument,commands[1]);
+      strcat(argument,space);
+      if(commands[2] != NULL){
+        strcat(argument,commands[2]);
+      }
+      pthread_create(&thread,NULL,thread_execution,(void *)(argument)); 
+       
+    }
+  }
+  
+  else if(commands[0][0] == 'd' && commands[0][1] == 'a' && commands[0][2] =='t' &&commands[0][3] == 'e' ){
+
+    if(commands[1] == NULL){
+      char path[] = "./date ";
+      strcat(argument,path);
+      pthread_create(&thread,NULL,thread_execution,(void *)(argument));
+    }
+    else{
+      if(commands[1] != NULL & commands[1][0] != '-'){
+        printf("msh: Error !. 😔🥲\nInvalid syntxa: Too many arguments for date.\n");
+      }
+      else if(commands[2]){
+        printf("msh: Error !. 😔🥲\nInvalid syntxa: Too many arguments for date.\n");
+      }
+      else{
+        char path[] = "./date ";
+        strcat(argument,path);
+        if(commands[1] != NULL){
+          strcat(argument,space);
+          strcat(argument,commands[1]);
         }
+        pthread_create(&thread,NULL,thread_execution,(void *)(argument));
+      }
     }
-}
+  }
 
-
-char** parseInput(char * line)
-{
-    int bufferSize = 64;
-    int position = 0;
-    char** tokens = malloc(sizeof(char*) * bufferSize);
-    char* currToken;
-
-    if(tokens == NULL)
-    {
-        printf("Error : Allocation error\n");
+  else if(commands[0][0] == 'r' && commands[0][1] == 'm'){
+    // char path[] = "/Users/mahansh/Downloads/Practice/OS/Shell/rm";
+    char path[] = "./rm ";
+    if(!commands[1]){
+        printf("msh: Error!. 😔🥲\nInlvaid syntax: Expects some argument to rm.\n");
     }
+    else{
+      strcat(argument,path);
+      strcat(argument,s);
+      strcat(argument,space);
+      strcat(argument,commands[1]);
+      strcat(argument,space);
+      if(commands[2] != NULL){
+        strcat(argument,commands[2]);
+      }
 
-    currToken = strtok(line, " ");
-    while(currToken != NULL)
-    {
-        tokens[position] = currToken;
-        position++;
-
-        if(position >= bufferSize)
-        {
-            bufferSize += 64;
-            tokens = realloc(tokens, bufferSize * sizeof(char*));
-            if(tokens == NULL)
-            {
-                printf("Error : Allocation error\n");
-            }
+      if(commands[2] != NULL && commands[1][0] != '-'){
+          printf("msh: Error!. 😔🥲\nInlvaid syntax: Too many arguments for rm.\n");
         }
+      else{
 
-        currToken = strtok(NULL, " ");
+        pthread_create(&thread,NULL,thread_execution,(void *)(argument));
+      }    
     }
-    tokens[position] = NULL;
-    return tokens;
-}
 
+  }
 
-bool execute(char** args)
-{
-    if(strcmp(args[0], "cd") == 0)
-        cd(args);
-    else if(strcmp(args[0], "echo") == 0)
-        echo(args);
-    else if(strcmp(args[0], "pwd") == 0)
-        pwd(args);
-    else if(strcmp(args[0], "ls") == 0)
-        ls(args);
-    else if(strcmp(args[0], "ls&t") == 0)
-        ls_thread(args);
-    else if(strcmp(args[0], "cat") == 0)
-        cat(args);
-    else if(strcmp(args[0], "cat&t") == 0)
-        cat_thread(args);
-    else if(strcmp(args[0], "date") == 0)
-        date(args);
-    else if(strcmp(args[0], "date&t") == 0)
-        date_thread(args);
-    else if(strcmp(args[0], "rm") == 0)
-        rm(args);
-    else if(strcmp(args[0], "rm&t") == 0)
-        rm_thread(args);
-    else if(strcmp(args[0], "mkdir") == 0)
-        mkdir(args);
-    else if(strcmp(args[0], "mkdir&t") == 0)
-        mkdir_thread(args);
-    else if(strcmp(args[0], "exit") == 0)
-        return false;
-    else
-    {
-        perror("Unknown command");
+  else if(commands[0][0] == 'm' && commands[0][1] == 'k' && commands[0][2] == 'd' && commands[0][3] == 'i' && commands[0][4] =='r'){
+    // char path[] = "/Users/mahansh/Downloads/Practice/OS/Shell/mkdir";
+    if(commands[1] == NULL){
+      printf("msh: Error !.😔🥲\nInvalid syntax: expects some argument to mkdir\n");
     }
-    return true;
-}
-
-
-void shell() 
-{
-    char *input;
-    char **arguments;
-    bool status = true;
-    char directory[1024];
-
-
-    while(status) 
-    {
-        getcwd(directory, sizeof(directory));
-        printf("[%s %s]$ ", (getenv("USER")), directory);
-        input = takeInput();
-        arguments = parseInput(input);
-        status = execute(arguments);
-
-        free(input);
-        free(arguments);
+    else if(commands[2] != NULL && commands[1][0] != '-'){
+      printf("msh: Error !.😔🥲\nInvalid syntax: Too many arguments for mkdir\n");
     }
-}
+    else{
+      char path[] = "./mkdir ";
+      strcat(argument,path);
+      strcat(argument,space);
+      strcat(argument,commands[1]);
+      strcat(argument,space);
+      if(commands[2] != NULL){
+        strcat(argument,commands[2]);
+      }
+      pthread_create(&thread,NULL,thread_execution,(void *)(argument));
+    }  
+  }
+  else{
+    printf("msh: Error !. 😔🥲\nNo such command exits in msh shell\n");
+    exit(EXIT_FAILURE);
+  }
+  pthread_join(thread,NULL);
+  }
 
+// _______________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________________
 
-int main() 
-{
-    shell();
-    return 0;
+int main(){
+  printf("Welcome to msh 🥳.\nMight crash while running 🥲.\n");
+  int boolean = 1;
+  char s[100];
+  getcwd(s,100);
+  while(boolean){
+    printf("\n>_ ");
+    char *line = taking_input(); // taking input
+    char **executable_comands = breaking_into_smaller_pieces(line); // breaking it into smaller executable commands
+    if(strcmp(executable_comands[0],"exit") == 0){
+      printf("Thanks for using msh !.🙇🏻‍♂️\n");
+      break;
+      exit(EXIT_SUCCESS);
+    }
+    execution(executable_comands,s); // executing commands
+
+    free(line);
+    free(executable_comands);
+
+  }
+  return EXIT_SUCCESS;
 }

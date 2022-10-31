@@ -1,68 +1,93 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
+int main(int argc,char *argv[],char *envp[]){
 
-int main(int argc, char* args[], char* envp[])
-{
-    if(args[2] == NULL)
-    {
-        int check;
-        char *dirName = args[1];
-
-        check = mkdir(dirName, 0777);
-
-        if(check != 0)
-        {
-            perror("Unable to create directory");
+    if(argv[2] == NULL){
+        int check = mkdir(argv[1], S_IRWXU);
+        if(check){
+            printf("msh: Error !.😔🥲\n");
+            if(errno == EEXIST){
+                printf("Directory Already Exists\n");
+            }
+            else if(errno == ENOSPC){
+                printf("Not enough space to create a directory\n");
+            }
+            else if(errno == EROFS){
+                printf("Directory is a read only, can't modify.\n");
+            }
+            else if(errno == 2){
+                printf("No such file or directory Exits.\n");
+            }
+            else{
+                perror(" ");
+            }
             exit(EXIT_FAILURE);
         }
     }
-    else if(args[1][0] == '-')
-    {
-        if(args[1][1] == 'v')
-        {
-            int check;
-            char *dirName = args[2];
-
-            check = mkdir(dirName, 0777);
-
-            if(check == 0)
-                printf("Directory created %s\n", (char*) args[1]);
-            else
-            {
-                perror("Unable to create directory");
-                exit(EXIT_FAILURE);
+    else if(strcmp(argv[1],"-v") == 0){
+        int check = mkdir(argv[2], S_IRWXU);
+        if(check){
+            printf("msh: Error !.😔🥲");
+            if(errno == EEXIST){
+                printf("Directory Already Exists\n");
             }
-        }
-        else if(args[1][1] == 'm')
-        {
-            int level = atoi(args[1]+3);
-            int check;
-            char *dirName = args[2];
-
-            check = mkdir(dirName, level);
-
-            if(check != 0)
-            {
-                perror("Unable to create directory");
-                exit(EXIT_FAILURE);
+            else if(errno == ENOSPC){
+                printf("Not enough space to create a directory\n");
             }
-        }
-        else
-        {
-            perror("Invalid operation error");
+            else if(errno == EROFS){
+                printf("Directory is a read only, can't modify.\n");
+            }
+            else if(errno == 2){
+                printf("No such file or directory Exits.\n");
+            }
+            else{
+                perror(" ");
+            }
             exit(EXIT_FAILURE);
         }
-    }
-    else
-    {
-        perror("Invalid syntax error");
-        exit(EXIT_FAILURE);
+        printf("New directory created: %s\n",argv[2]);
     }
 
-    return 0;
+    else if(argv[1][0] == '-' && argv[1][1] == 'p'){
+        int check = mkdir(argv[2], S_IRWXU);
+        if(check){
+            char *temp = argv[2];
+            char *directory;
+            directory = strtok(temp,"/"); 
+            while(directory != NULL){
+                int check = mkdir(directory, S_IRWXU);
+                if(check){
+                    printf("msh: Error !.😔🥲\n");
+                    if(errno == EEXIST){
+                        printf("Directory Already Exists\n");
+                    }
+                    else if(errno == ENOSPC){
+                        printf("Not enough space to create a directory\n");
+                    }
+                    else if(errno == EROFS){
+                        printf("Directory is a read only, can't modify.\n");
+                    }
+                    else if(errno == 2){
+                        printf("No such file or directory Exits.\n");
+                    }
+                    else{
+                        printf("%d\n",errno);
+                        perror(" ");
+                    }
+                    exit(EXIT_FAILURE);
+                }
+                chdir(directory);
+                directory = strtok(NULL, "/");
+            }   
+        }
+        
+    }
+    else{
+        printf("msh: Error !.😔🥲]\nNo such operation exists for mkdir\n");
+    }
 }
